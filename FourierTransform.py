@@ -5,7 +5,6 @@ Created on Sat Sep 18 12:36:39 2021
 @author: Loïc James McKeever
 """
 
-import random as rd
 import numpy as np
 import scipy as sp
 import sympy as smp
@@ -36,7 +35,8 @@ x2 = np.sin(2*np.pi*f2*t) + 0.1*np.random.random(len(t))
 x3 = np.sin(2*np.pi*f3*t) + 0.1*np.random.random(len(t))
 
 #Plot in bokeh
-source = ColumnDataSource(data=dict(t=t,x1=x1, x2=x2, x3=x3))
+source = ColumnDataSource(data=dict(t=t,x1=x1))
+source2 = ColumnDataSource(data=dict(t=t, x2=x2, x3=x3))
 
 #Plot x1 in it's own graph
 plot1 = figure(title="Signal x1 over time", width=1200, height=600)
@@ -61,8 +61,8 @@ plot1_FFT.yaxis.axis_label = y_label_FFT
 
 #Plot x2 and x3 together
 plot2 = figure(title="Signals x2 and x3 over time", width=1200, height=600)
-plot2.line('t','x2', source=source, line_color='red')
-plot2.line('t', 'x3', source=source, line_color='green')
+plot2.line('t','x2', source=source2, line_color='red')
+plot2.line('t', 'x3', source=source2, line_color='green')
 plot1.xaxis.axis_label = x_label
 plot1.yaxis.axis_label = y_label
 
@@ -80,21 +80,28 @@ plot2_FFT.yaxis.axis_label = y_label_FFT
 
 N_slider = Slider(start=50, end=1000, value=100, step=50, title="N")
 
-callback = CustomJS(args=dict(source=source, f2=f2, f3=f3, N_slider=N_slider), code = """
+callback = CustomJS(args=dict(source=source2, f2=f2, f3=f3, N_slider=N_slider), code = """
                     
                     const data = source.data;
-                    var x2 = data['x2'];
-                    var x3 = data['x3'];
+                    var x2 = [].slice.call(data['x2']);
+                    var x3 = [].slice.call(data['x3']);
                     
                     var N = N_slider.value;
                     
                     var t = makeArr(0,40, N);
                     
-                    for (var i = 0; i < N; i++){
-                            x2[i] = Math.sin(2*Math.PI*f2*t[i]) + Math.random()*(N/10);
-                            x3[i] = Math.sin(2*Math.PI*f3*t[i]) + Math.random()*(N/10);
-                    } 
-                    
+                    if (N > x2.length){
+                            for (var i = 0; i < N; i++){
+                                    if (i<x2.length){
+                                            x2[i] = Math.sin(2*Math.PI*f2*t[i]) + 0.1*Math.random();
+                                            x3[i] = Math.sin(2*Math.PI*f3*t[i]) + 0.1*Math.random();
+                                    } else {
+                                        x2.push(Math.sin(2*Math.PI*f2*t[i]) + 0.1*Math.random());
+                                        x3.push(Math.sin(2*Math.PI*f3*t[i]) + 0.1*Math.random());
+                                        }
+                            }
+                    }
+
                     function makeArr(startValue, stopValue, cardinality) {
                         var arr = [];
                         var step = (stopValue - startValue) / (cardinality - 1);
@@ -102,10 +109,13 @@ callback = CustomJS(args=dict(source=source, f2=f2, f3=f3, N_slider=N_slider), c
                                 arr.push(startValue + (step * i));
                                 }
                         return arr;
+                    }
                     
-                    console.log(x2.length, x3.length, N)
+                    data['x2'] = x2;
+                    data['x3'] = x3;
+                    data['t'] = t;
                     
-                    source.change.emit()
+                    source.change.emit();
                     
                     """)
 
