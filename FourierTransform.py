@@ -78,29 +78,23 @@ plot2_FFT.line('f', 'x3_FFT', source=source_FFT2, line_color='green')
 plot2_FFT.xaxis.axis_label = x_label_FFT
 plot2_FFT.yaxis.axis_label = y_label_FFT
 
-N_slider = Slider(start=50, end=1000, value=100, step=50, title="N")
+N_slider = Slider(start=50, end=1500, value=100, step=50, title="N")
 
 callback = CustomJS(args=dict(source=source2, f2=f2, f3=f3, N_slider=N_slider), code = """
                     
                     const data = source.data;
-                    var x2 = [].slice.call(data['x2']);
-                    var x3 = [].slice.call(data['x3']);
-                    
                     var N = N_slider.value;
                     
                     var t = makeArr(0,40, N);
+                    var x2 = [];
+                    var x3 = [];
                     
-                    if (N > x2.length){
-                            for (var i = 0; i < N; i++){
-                                    if (i<x2.length){
-                                            x2[i] = Math.sin(2*Math.PI*f2*t[i]) + 0.1*Math.random();
-                                            x3[i] = Math.sin(2*Math.PI*f3*t[i]) + 0.1*Math.random();
-                                    } else {
-                                        x2.push(Math.sin(2*Math.PI*f2*t[i]) + 0.1*Math.random());
-                                        x3.push(Math.sin(2*Math.PI*f3*t[i]) + 0.1*Math.random());
-                                        }
-                            }
+                   
+                    for (var i = 0; i < N; i++){
+                            x2[i] = Math.sin(2*Math.PI*f2*t[i]) + 0.1*Math.random();
+                            x3[i] = Math.sin(2*Math.PI*f3*t[i]) + 0.1*Math.random();
                     }
+                    
 
                     function makeArr(startValue, stopValue, cardinality) {
                         var arr = [];
