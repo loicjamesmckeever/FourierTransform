@@ -72,23 +72,40 @@ x3_FFT = np.abs(fft(x3))[:N//2]
 
 source_FFT2 = ColumnDataSource(dict(f=f, x2_FFT=x2_FFT, x3_FFT=x3_FFT))
 
-plot2_FFT = figure(title="Fourier transform of x1", width=1200, height=600)
+plot2_FFT = figure(title="Fourier transform of x2 and x3", width=1200, height=600)
 plot2_FFT.line('f', 'x2_FFT', source=source_FFT2, line_color='red')
 plot2_FFT.line('f', 'x3_FFT', source=source_FFT2, line_color='green')
 plot2_FFT.xaxis.axis_label = x_label_FFT
 plot2_FFT.yaxis.axis_label = y_label_FFT
 
-N_slider = Slider(start=50, end=1500, value=100, step=50, title="N")
+#Define slider object
+N_slider = Slider(start=100, end=1500, value=100, step=10, title="N")
 
-callback = CustomJS(args=dict(source=source2, f2=f2, f3=f3, N_slider=N_slider), code = """
+#FFT for x2 and x3 with each step of N
+x2_FFT_N = []
+x3_FFT_N = []
+f_N = []
+for n in range(100, 1550, 10):
+    t_N = np.linspace(0, T, n)
+    dt_N = np.diff(t_N)[0]
+    x2_N = np.sin(2*np.pi*f2*t_N) + 0.1*np.random.random(len(t_N))
+    x3_N = np.sin(2*np.pi*f3*t_N) + 0.1*np.random.random(len(t_N))
+    x2_FFT_N.append(np.abs(fft(x2_N))[:n//2])
+    x3_FFT_N.append(np.abs(fft(x3_N))[:n//2])
+    f_N.append(fftfreq(len(t_N), dt_N)[:n//2])
+
+#Custom JavaScript for slider
+callback = CustomJS(args=dict(source=source2, source_FFT=source_FFT2, f2=f2, f3=f3, N_slider=N_slider, x2_FFT_N=x2_FFT_N, x3_FFT_N=x3_FFT_N, f_N = f_N), code = """
                     
                     const data = source.data;
+                    const data_FFT = source_FFT.data;
+                    
                     var N = N_slider.value;
                     
                     var t = makeArr(0,40, N);
                     var x2 = [];
                     var x3 = [];
-                    
+
                    
                     for (var i = 0; i < N; i++){
                             x2[i] = Math.sin(2*Math.PI*f2*t[i]) + 0.1*Math.random();
@@ -111,6 +128,11 @@ callback = CustomJS(args=dict(source=source2, f2=f2, f3=f3, N_slider=N_slider), 
                     
                     source.change.emit();
                     
+                    data_FFT['f'] = f_N[((N/10)-10)];
+                    data_FFT['x2_FFT'] = x2_FFT_N[((N/10)-10)];
+                    data_FFT['x3_FFT'] = x3_FFT_N[((N/10)-10)];
+                    
+                    source_FFT.change.emit();
                     """)
 
 N_slider.js_on_change('value',callback)
