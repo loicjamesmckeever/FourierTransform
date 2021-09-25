@@ -12,7 +12,7 @@ from skimage import color, io
 from scipy.fft import fftfreq, fft, ifft, fft2, ifft2
 
 from bokeh.layouts import column, row
-from bokeh.models import CustomJS, Slider, HoverTool, Label, Button
+from bokeh.models import CustomJS, Slider, HoverTool, Label, Button, Div
 from bokeh.plotting import figure, output_file, show, ColumnDataSource
 
 ## Discrete Fourier Transform
@@ -79,7 +79,7 @@ plot2_FFT.xaxis.axis_label = x_label_FFT
 plot2_FFT.yaxis.axis_label = y_label_FFT
 
 #Define slider object
-N_slider = Slider(start=100, end=1500, value=100, step=10, title="N")
+N_slider = Slider(start=100, end=1500, value=100, step=10, title="N (number of measurements)")
 
 #FFT for x2 and x3 with each step of N
 x2_FFT_N = []
@@ -140,10 +140,70 @@ N_slider.js_on_change('value',callback)
 ## makeArr function from user mhodges on Stackoverflow
 
 #Define output file
-output_file("FourierTranform.html", title="Fourier Transform")
+output_file("FourierTranform.html", title="Discrete Fourier Transform")
+
+#HTML headers and paragrphs
+header1 = Div(text = """
+             <header> Fourier Transform </header>
+             """
+             , style = {'font-size': '300%', 'font-family':'Georgia, serif'})
+
+header2 = Div(text = """
+             <header> Introduction </header>
+             """
+             , style = {'font-size': '200%', 'font-family':'Georgia, serif'})
+
+p1 = Div(text = """
+         <div> 
+         The Fourier transform is a method of decomposing a function that depends on space or time into
+         a function depending on spatial of temporal frequency.  For example you can use a Fourier transform
+         on an audio signal that varies in amplitude over time to determine the frequencies the audio signal
+         is composed of. The transform is defined by the following equation: 
+             </div>
+         """
+         , style = {'font-size': '200%', 'font-family':'Georgia, serif'})
+
+equation1 = Div(text = """
+          <math> 
+          <mover><mi>f</mi><mo>&Hat;</mo></mover> (&xi;) = 
+          <msubsup><mo>&Integral;</mo><mn>-&infin;</mn><mo>&infin;</mo></msubsup> f(x) <msup><mi>e</mi><mo>-2&pi;ix&xi;</mo></msup> <mi>dx,  (Eq. 1)</mi>
+          _______________________________________________________________________________________________
+          </math>
+         """
+         , style = {'font-size': '200%', 'text-align':'center'})
+
+header3 = Div(text = """
+             <header> Discrete Fourier Transform </header>
+             """
+             , style = {'font-size': '200%', 'font-family':'Georgia, serif'})
+
+p2 = Div(text = """
+         <div>The discrete Fourier transform is a version of the Fourier transform that takes a finite number 
+         of equally spaced samples of a time dependant function and returns a finite set of equally spaced
+         samples of the frequency dependant NEEDS EDITING.
+         </div>
+         """
+         , style = {'font-size': '200%', 'font-family':'Georgia, serif'})
+
+equation2 = Div(text = """
+          <math> 
+          <mover><mi>x</mi><mo>&Hat;</mo></mover> (<msub><mi>f</mi><mn>n</mn></msub>) = 
+          <msubsup><mo>&sum;</mo><mn>k</mn><mo>N</mo></msubsup> <msub><mi>x</mi><mn>t</mn></msub> <msup><mi>e</mi><mo>-2&pi;i(fn)k&Delta;t</mo></msup> <mi>,  (Eq. 2)</mi>
+          _______________________________________________________________________________________________
+          </math>
+         """
+         , style = {'font-size': '200%', 'text-align':'center'})
+
+p3 = Div(text = """
+         <div>The discrete Fourier transform is a version of the Fourier transform that takes a finite number 
+         of equally spaced samples of a time dependant function and returns a finite set of equally spaced
+         samples of the frequency dependant NEEDS EDITING.
+         </div>
+         """
+         , style = {'font-size': '200%', 'font-family':'Georgia, serif'})
 
 #Define layout
-layout = column(plot1, plot1_FFT, row(plot2, N_slider), plot2_FFT)
+layout = column(header1, header2, p1, equation1, header3, p2, equation2, p3, plot1, plot1_FFT, plot2, N_slider, plot2_FFT)
 
 #Display file
 show(layout)
