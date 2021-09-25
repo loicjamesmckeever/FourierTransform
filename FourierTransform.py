@@ -39,7 +39,7 @@ source = ColumnDataSource(data=dict(t=t,x1=x1))
 source2 = ColumnDataSource(data=dict(t=t, x2=x2, x3=x3))
 
 #Plot x1 in it's own graph
-plot1 = figure(title="Signal x1 over time", width=1200, height=600)
+plot1 = figure(title="Signal x1 over time", width=1500, height=600)
 plot1.line('t','x1', source=source)
 x_label = "Time in seconds"
 y_label = "Signal amplitude"
@@ -52,7 +52,7 @@ x1_FFT = np.abs(fft(x1)[:N//2])
 
 source_FFT = ColumnDataSource(dict(f=f, x1_FFT=x1_FFT))
 
-plot1_FFT = figure(title="Fourier transform of x1", width=1200, height=600)
+plot1_FFT = figure(title="Fourier transform of x1", width=1500, height=600)
 plot1_FFT.line('f', 'x1_FFT', source=source_FFT)
 x_label_FFT = 'Frequency in Hz'
 y_label_FFT = 'Intensity'
@@ -60,7 +60,7 @@ plot1_FFT.xaxis.axis_label = x_label_FFT
 plot1_FFT.yaxis.axis_label = y_label_FFT
 
 #Plot x2 and x3 together
-plot2 = figure(title="Signals x2 and x3 over time", width=1200, height=600)
+plot2 = figure(title="Signals x2 and x3 over time", width=1500, height=600)
 plot2.line('t','x2', source=source2, line_color='red')
 plot2.line('t', 'x3', source=source2, line_color='green')
 plot1.xaxis.axis_label = x_label
@@ -72,7 +72,7 @@ x3_FFT = np.abs(fft(x3))[:N//2]
 
 source_FFT2 = ColumnDataSource(dict(f=f, x2_FFT=x2_FFT, x3_FFT=x3_FFT))
 
-plot2_FFT = figure(title="Fourier transform of x2 and x3", width=1200, height=600)
+plot2_FFT = figure(title="Fourier transform of x2 and x3", width=1500, height=600)
 plot2_FFT.line('f', 'x2_FFT', source=source_FFT2, line_color='red')
 plot2_FFT.line('f', 'x3_FFT', source=source_FFT2, line_color='green')
 plot2_FFT.xaxis.axis_label = x_label_FFT
@@ -140,18 +140,23 @@ N_slider.js_on_change('value',callback)
 ## makeArr function from user mhodges on Stackoverflow
 
 #Define output file
-output_file("FourierTranform.html", title="Discrete Fourier Transform")
+output_file("FourierTransform.html", title="Discrete Fourier Transform")
+
+#Define CSS style for HTML divs
+style_title = {'font-size': '300%', 'font-family':'Georgia, serif'}
+style_div = {'font-size': '200%', 'font-family':'Georgia, serif'}
+style_equation = {'font-size': '200%', 'text-align':'center'}
 
 #HTML headers and paragrphs
 header1 = Div(text = """
              <header> Fourier Transform </header>
              """
-             , style = {'font-size': '300%', 'font-family':'Georgia, serif'})
+             , style = style_title)
 
 header2 = Div(text = """
              <header> Introduction </header>
              """
-             , style = {'font-size': '200%', 'font-family':'Georgia, serif'})
+             , style = style_div)
 
 p1 = Div(text = """
          <div> 
@@ -161,49 +166,97 @@ p1 = Div(text = """
          is composed of. The transform is defined by the following equation: 
              </div>
          """
-         , style = {'font-size': '200%', 'font-family':'Georgia, serif'})
+         , style = style_div)
 
 equation1 = Div(text = """
           <math> 
           <mover><mi>f</mi><mo>&Hat;</mo></mover> (&xi;) = 
           <msubsup><mo>&Integral;</mo><mn>-&infin;</mn><mo>&infin;</mo></msubsup> f(x) <msup><mi>e</mi><mo>-2&pi;ix&xi;</mo></msup> <mi>dx,  (Eq. 1)</mi>
-          _______________________________________________________________________________________________
+          _______________________________________________________________________________________________________________________________________________________
           </math>
          """
-         , style = {'font-size': '200%', 'text-align':'center'})
+         , style =style_equation)
 
 header3 = Div(text = """
              <header> Discrete Fourier Transform </header>
              """
-             , style = {'font-size': '200%', 'font-family':'Georgia, serif'})
+             , style = style_div)
 
 p2 = Div(text = """
          <div>The discrete Fourier transform is a version of the Fourier transform that takes a finite number 
          of equally spaced samples of a time dependant function and returns a finite set of equally spaced
-         samples of the frequency dependant NEEDS EDITING.
+         samples of the frequency dependent discrete-time Fourier transform which is a continuous function.
+         
+         In summary the discrete Fourier tranform takes a time dependent series of N complex numbers 
+         <math>{<msub><mi>x</mi><mn>n</mn></msub>} = <msub><mi>x</mi><mn>0</mn></msub>, <msub><mi>x</mi><mn>1</mn></msub>, ..., <msub><mi>x</mi><mn>N-1</mn></msub> </math> and returns
+         a frequency dependent series of N complex numbers <math>{<msub><mi>X</mi><mn>k</mn></msub>} = <msub><mi>X</mi><mn>0</mn></msub>, 
+         <msub>X</mi><mn>1</mn></msub>, ..., <msub><mi>X</mi><mn>N-1</mn></msub> </math> 
+         as defined by the following equation:
          </div>
          """
-         , style = {'font-size': '200%', 'font-family':'Georgia, serif'})
+         , style = style_div)
 
 equation2 = Div(text = """
           <math> 
-          <mover><mi>x</mi><mo>&Hat;</mo></mover> (<msub><mi>f</mi><mn>n</mn></msub>) = 
+          X(<msub><mi>f</mi><mn>n</mn></msub>) = 
           <msubsup><mo>&sum;</mo><mn>k</mn><mo>N</mo></msubsup> <msub><mi>x</mi><mn>t</mn></msub> <msup><mi>e</mi><mo>-2&pi;i(fn)k&Delta;t</mo></msup> <mi>,  (Eq. 2)</mi>
-          _______________________________________________________________________________________________
+          </math>
+          <br>
+          <math>
+          where <msub><mi>f</mi><mn>n</mn></msub> are the so called Fourier frequencies and are defined by
+          </math>
+          <br>
+          <math>
+          <msub><mi>f</mi><mn>n</mn></msub> = <mfrac> <mi>n</mi> <mi>N&Delta;t</mi> </mfrac><mi>, (Eq. 3)</mi>
+          </math>
+          <br>
+          <math>
+          which means Eq. 2 can be simplified to
+          </math>
+          <br>
+          <math> 
+          X(<msub><mi>f</mi><mn>n</mn></msub>) = 
+          <msubsup><mo>&sum;</mo><mn>k</mn><mo>N</mo></msubsup> <msub><mi>x</mi><mn>t</mn></msub> <msup><mi>e</mi><mo>-2&pi;ink/N</msup><mi>,  (Eq. 4)</mi>
+          </math>
+          <br>
+          <math>
+          _______________________________________________________________________________________________________________________________________________________
           </math>
          """
-         , style = {'font-size': '200%', 'text-align':'center'})
+         , style = style_equation)
+
+header4 = Div(text = """
+             <header> Example </header>
+             """
+             , style = style_div)
+
+equation3 = Div(text = """
+         <math>
+         For the following plot we take N=100 measurements over a 40 second period of the following time series function
+         </math>
+         <br>
+         <math>
+         <msub><mi>x</mi><mn>1</mn></msub>(t) = sin(2&pi;<msub><mi>f</mi><mn>1</mn></msub>) + 0.3sin(2&pi;<msub><mi>f</mi><mn>2</mn></msub>) + random noise, where
+         <msub><mi>f</mi><mn>1</mn></msub> &thickapprox; 0.5 Hz and <msub><mi>f</mi><mn>2</mn></msub> &thickapprox; 0.25 Hz
+         </math>
+         """
+         , style = style_equation)
 
 p3 = Div(text = """
-         <div>The discrete Fourier transform is a version of the Fourier transform that takes a finite number 
-         of equally spaced samples of a time dependant function and returns a finite set of equally spaced
-         samples of the frequency dependant NEEDS EDITING.
+         <div>
+         We then do a discrete Fourier transform and plot the values against the Fourier frequencies.  We can see two peaks in the series at 0.25 and 0.5 Hz which
+         correspond to the two frequencies that make up the signal.  It's important to note that the plot only includes half the values since the full plot is symmetrical about 0.
          </div>
          """
-         , style = {'font-size': '200%', 'font-family':'Georgia, serif'})
+         , style = style_div)
+
+header5 = Div(text = """
+             <header> Undersampling and the Nyquist frequency </header>
+             """
+             , style = style_div)
 
 #Define layout
-layout = column(header1, header2, p1, equation1, header3, p2, equation2, p3, plot1, plot1_FFT, plot2, N_slider, plot2_FFT)
+layout = column(header1, header2, p1, equation1, header3, p2, equation2, equation3, plot1, p3, plot1_FFT, header5, plot2, N_slider, plot2_FFT)
 
 #Display file
 show(layout)
