@@ -63,8 +63,8 @@ plot1_FFT.yaxis.axis_label = y_label_FFT
 plot2 = figure(title="Signals x2 and x3 over time", width=1500, height=600)
 plot2.line('t','x2', source=source2, line_color='red')
 plot2.line('t', 'x3', source=source2, line_color='green')
-plot1.xaxis.axis_label = x_label
-plot1.yaxis.axis_label = y_label
+plot2.xaxis.axis_label = x_label
+plot2.yaxis.axis_label = y_label
 
 #Fourier transform of x2 and x3 together
 x2_FFT = np.abs(fft(x2))[:N//2]
@@ -96,22 +96,22 @@ for n in range(100, 1550, 10):
 
 #Custom JavaScript for slider
 callback = CustomJS(args=dict(source=source2, source_FFT=source_FFT2, f2=f2, f3=f3, N_slider=N_slider, x2_FFT_N=x2_FFT_N, x3_FFT_N=x3_FFT_N, f_N = f_N), code = """
-                    
+
                     const data = source.data;
                     const data_FFT = source_FFT.data;
-                    
+
                     var N = N_slider.value;
-                    
+
                     var t = makeArr(0,40, N);
                     var x2 = [];
                     var x3 = [];
 
-                   
+
                     for (var i = 0; i < N; i++){
                             x2[i] = Math.sin(2*Math.PI*f2*t[i]) + 0.1*Math.random();
                             x3[i] = Math.sin(2*Math.PI*f3*t[i]) + 0.1*Math.random();
                     }
-                    
+
 
                     function makeArr(startValue, stopValue, cardinality) {
                         var arr = [];
@@ -121,17 +121,17 @@ callback = CustomJS(args=dict(source=source2, source_FFT=source_FFT2, f2=f2, f3=
                                 }
                         return arr;
                     }
-                    
+
                     data['x2'] = x2;
                     data['x3'] = x3;
                     data['t'] = t;
-                    
+
                     source.change.emit();
-                    
+
                     data_FFT['f'] = f_N[((N/10)-10)];
                     data_FFT['x2_FFT'] = x2_FFT_N[((N/10)-10)];
                     data_FFT['x3_FFT'] = x3_FFT_N[((N/10)-10)];
-                    
+
                     source_FFT.change.emit();
                     """)
 
@@ -144,8 +144,8 @@ output_file("FourierTransform.html", title="Discrete Fourier Transform")
 
 #Define CSS style for HTML divs
 style_title = {'font-size': '300%', 'font-family':'Georgia, serif'}
-style_div = {'font-size': '200%', 'font-family':'Georgia, serif'}
-style_equation = {'font-size': '200%', 'text-align':'center'}
+style_div = {'font-size': '200%', 'font-family':'Georgia, serif', 'width':'1500px'}
+style_equation = {'font-size': '200%', 'text-align':'center', 'width':'1500px'}
 
 #HTML headers and paragrphs
 header1 = Div(text = """
@@ -159,18 +159,18 @@ header2 = Div(text = """
              , style = style_div)
 
 p1 = Div(text = """
-         <div> 
+         <div>
          The Fourier transform is a method of decomposing a function that depends on space or time into
          a function depending on spatial of temporal frequency.  For example you can use a Fourier transform
          on an audio signal that varies in amplitude over time to determine the frequencies the audio signal
-         is composed of. The transform is defined by the following equation: 
+         is composed of. The transform is defined by the following equation:
              </div>
          """
          , style = style_div)
 
 equation1 = Div(text = """
-          <math> 
-          <mover><mi>f</mi><mo>&Hat;</mo></mover> (&xi;) = 
+          <math>
+          <mover><mi>f</mi><mo>&Hat;</mo></mover> (&xi;) =
           <msubsup><mo>&Integral;</mo><mn>-&infin;</mn><mo>&infin;</mo></msubsup> f(x) <msup><mi>e</mi><mo>-2&pi;ix&xi;</mo></msup> <mi>dx,  (Eq. 1)</mi>
           _______________________________________________________________________________________________________________________________________________________
           </math>
@@ -183,22 +183,22 @@ header3 = Div(text = """
              , style = style_div)
 
 p2 = Div(text = """
-         <div>The discrete Fourier transform is a version of the Fourier transform that takes a finite number 
+         <div>The discrete Fourier transform is a version of the Fourier transform that takes a finite number
          of equally spaced samples of a time dependant function and returns a finite set of equally spaced
          samples of the frequency dependent discrete-time Fourier transform which is a continuous function.
-         
-         In summary the discrete Fourier tranform takes a time dependent series of N complex numbers 
+
+         In summary the discrete Fourier tranform takes a time dependent series of N complex numbers
          <math>{<msub><mi>x</mi><mn>n</mn></msub>} = <msub><mi>x</mi><mn>0</mn></msub>, <msub><mi>x</mi><mn>1</mn></msub>, ..., <msub><mi>x</mi><mn>N-1</mn></msub> </math> and returns
-         a frequency dependent series of N complex numbers <math>{<msub><mi>X</mi><mn>k</mn></msub>} = <msub><mi>X</mi><mn>0</mn></msub>, 
-         <msub>X</mi><mn>1</mn></msub>, ..., <msub><mi>X</mi><mn>N-1</mn></msub> </math> 
+         a frequency dependent series of N complex numbers <math>{<msub><mi>X</mi><mn>k</mn></msub>} = <msub><mi>X</mi><mn>0</mn></msub>,
+         <msub>X</mi><mn>1</mn></msub>, ..., <msub><mi>X</mi><mn>N-1</mn></msub> </math>
          as defined by the following equation:
          </div>
          """
          , style = style_div)
 
 equation2 = Div(text = """
-          <math> 
-          X(<msub><mi>f</mi><mn>n</mn></msub>) = 
+          <math>
+          X(<msub><mi>f</mi><mn>n</mn></msub>) =
           <msubsup><mo>&sum;</mo><mn>k</mn><mo>N</mo></msubsup> <msub><mi>x</mi><mn>t</mn></msub> <msup><mi>e</mi><mo>-2&pi;i(fn)k&Delta;t</mo></msup> <mi>,  (Eq. 2)</mi>
           </math>
           <br>
@@ -214,13 +214,9 @@ equation2 = Div(text = """
           which means Eq. 2 can be simplified to
           </math>
           <br>
-          <math> 
-          X(<msub><mi>f</mi><mn>n</mn></msub>) = 
-          <msubsup><mo>&sum;</mo><mn>k</mn><mo>N</mo></msubsup> <msub><mi>x</mi><mn>t</mn></msub> <msup><mi>e</mi><mo>-2&pi;ink/N</msup><mi>,  (Eq. 4)</mi>
-          </math>
-          <br>
           <math>
-          _______________________________________________________________________________________________________________________________________________________
+          X(<msub><mi>f</mi><mn>n</mn></msub>) =
+          <msubsup><mo>&sum;</mo><mn>k</mn><mo>N</mo></msubsup> <msub><mi>x</mi><mn>t</mn></msub> <msup><mi>e</mi><mo>-2&pi;ink/N</msup><mi>,  (Eq. 4)</mi>
           </math>
          """
          , style = style_equation)
@@ -251,12 +247,80 @@ p3 = Div(text = """
          , style = style_div)
 
 header5 = Div(text = """
+            <br>
+            <math>
+            _______________________________________________________________________________________________________________________________________________________
+            </math>
              <header> Undersampling and the Nyquist frequency </header>
              """
              , style = style_div)
 
+p4 = Div(text = """
+         <div>
+         The number of measurements taken, N, is not as arbitrary as you might think.  The sampling rate can have an effect on the results of the Fourier Transform and can lead to
+         inaccurate results.  The main concern is undersampling, the two graphs below illustrate how undersampling
+         </div>
+         <br>
+         """
+         , style = style_div)
+
+equation4 = Div(text = """
+         <math>
+         For the following plot we take N=100 measurements over a 40 second period of the following time series functions
+         </math>
+         <br>
+         <math>
+         <msub><mi>x</mi><mn>2</mn></msub>(t) = sin(2&pi;<msub><mi>f</mi><mn>2</mn></msub>) + random noise, where
+         <msub><mi>f</mi><mn>2</mn></msub> &thickapprox; 0.25 Hz
+         </math>
+         <br>
+         <math>
+         <msub><mi>x</mi><mn>3</mn></msub>(t) = sin(2&pi;<msub><mi>f</mi><mn>1</mn></msub>) + random noise, where
+         <msub><mi>f</mi><mn>3</mn></msub> &thickapprox; 12.62 Hz
+         </math>
+         """
+         , style = style_equation)
+
+p5 = Div(text = """
+         <div>
+         At first glance the signals look identical, like they have the same frequency.  Using the slider to increase N you'll notice that x3 and it's frequency change though while x2 doesn't.
+         This is because x3 is being undersampled while x2 isn't.  As you increase the sampling rate the 'measured' frequency will bounce around until you reach approximately 1010.  After that
+         no matter how much you increase the number of samples both frequencies with remain the same.  This because we've reached what is called the Nyquist rate, named after Harry Nyquist.
+         </div>
+         <br>
+         """
+         , style = style_div)
+
+equation5 = Div(text = """
+         <math>
+         The Nyquist rate is defined by the following equation
+         </math>
+         <br>
+         <math>
+         <msub><mi>&rho;</mi><mn>NYQUIST</mn></msub> = 2<msub><mi>f</mi><mn>max</mn></msub> (Eq. 4)
+         </math>
+         <br>
+         <math>
+         where <msub><mi>f</mi><mn>max</mn></msub> is the highest frequency in the signal being measured.
+         </math>
+         <br>
+         <math>
+         So in our case we know that the maximum frequency of our signal is 12.62 Hz therefore the Nyquist rate will be 25.24 Hz.
+         From that we can determine the required minimum number of samples, <msub><mi>N</mi><mn>min</mn></msub>, required using
+         </math>
+         <br>
+         <math>
+         <msub><mi>N</mi><mn>min</mn></msub> = <msub><mi>&rho;</mi><mn>NYQUIST</mn></msub>T (Eq. 5)
+         </math>
+         <br>
+         <math>
+         where T is our measurement period of 40 seconds which means  <msub><mi>N</mi><mn>min</mn></msub> &thickapprox; 1010 measurements.
+         </math>
+         """
+         , style = style_equation)
+
 #Define layout
-layout = column(header1, header2, p1, equation1, header3, p2, equation2, equation3, plot1, p3, plot1_FFT, header5, plot2, N_slider, plot2_FFT)
+layout = column(header1, header2, p1, equation1, header3, p2, equation2, equation3, plot1, p3, plot1_FFT, header5, p4, equation4, plot2, N_slider, plot2_FFT, p5, equation5)
 
 #Display file
 show(layout)
